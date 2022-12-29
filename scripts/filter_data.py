@@ -43,4 +43,4 @@ to_keep = concept_id_counts.index[concept_id_counts >= CONCEPT_ID_MIN_FREQ]
 df = df[df.concept_id.isin(to_keep)]
 
 # save filtered dataset
-df.to_feather(snek.output[0])
+df.reset_index(drop=True).to_feather(snek.output[0])

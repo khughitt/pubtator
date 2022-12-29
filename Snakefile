@@ -17,13 +17,13 @@ ANNOT_TYPES = ["cellline", "chemical", "disease", "gene", "mutation", "species"]
 
 rule all:
     input:
-        expand(os.path.join(config["output_dir"], "filtered", "{annot}2pubtatorcentral.gz"), annot=ANNOT_TYPES),
+        expand(os.path.join(config["output_dir"], "filtered", "{annot}2pubtatorcentral.feather"), annot=ANNOT_TYPES),
 
 rule filter_data:
     input:
         os.path.join(config["output_dir"], "raw", "{annot}2pubtatorcentral.gz")
     output:
-        os.path.join(config["output_dir"], "filtered", "{annot}2pubtatorcentral.gz")
+        os.path.join(config["output_dir"], "filtered", "{annot}2pubtatorcentral.feather")
     script:
         "scripts/filter_data.py"
 
