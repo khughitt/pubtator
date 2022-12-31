@@ -20,7 +20,7 @@ infile:str = snek.input[0]
 df = pd.read_csv(infile, sep='\t',
                  names=['pmid', 'type', 'concept_id', 'mentions', 'resource'],
                  dtype={'pmid': 'int32', 'type': 'category', 'concept_id': 'category',
-                        'mentions': str, 'resource': 'category'},
+                        'mentions': 'category', 'resource': 'category'},
                  quoting=3)
 
 # remove entries whose "mentions" field contains tabs/newline characters;
@@ -41,6 +41,11 @@ df = df[df.mentions.isin(to_keep)]
 concept_id_counts = df.concept_id.value_counts()
 to_keep = concept_id_counts.index[concept_id_counts >= CONCEPT_ID_MIN_FREQ]
 df = df[df.concept_id.isin(to_keep)]
+
+# drop category levels no longer needed
+df.concept_id = df.concept_id.cat.remove_unused_categories()
+df.mentions = df.mentions.cat.remove_unused_categories()
+df.resource = df.resource.cat.remove_unused_categories()
 
 # save filtered dataset
 df.reset_index(drop=True).to_feather(snek.output[0])
