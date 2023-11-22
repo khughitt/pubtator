@@ -20,8 +20,40 @@ rule all:
         expand(os.path.join(config["output_dir"], "counts", "{annot}_concept_ids.feather"), annot=ANNOT_TYPES),
         expand(os.path.join(config["output_dir"], "counts", "{annot}_mentions.feather"), annot=ANNOT_TYPES),
         os.path.join(config["output_dir"], "counts", "unique_genes.feather"),
-        os.path.join(config["output_dir"], "ids", "human_symbol2entrez.feather"),
-        os.path.join(config["output_dir"], "ids", "human_ensgene2entrez.feather")
+        os.path.join(config["output_dir"], "ids", "human", "symbol2entrez.feather"),
+        os.path.join(config["output_dir"], "ids", "human", "ensgene2entrez.feather"),
+        os.path.join(config["output_dir"], "json", "human_entrez_pmids.json"),
+        os.path.join(config["output_dir"], "json", "disease_pmids.json"),
+        os.path.join(config["output_dir"], "json", "chemical_pmids.json")
+
+rule create_chemical_pmid_mapping:
+    input:
+        os.path.join(config["output_dir"], "filtered", "chemical.feather")
+    output:
+        os.path.join(config["output_dir"], "json", "chemical_pmids.json")
+    script:
+        "scripts/create_chemical_pmid_mapping.py"
+
+rule create_disease_pmid_mapping:
+    input:
+        os.path.join(config["output_dir"], "filtered", "disease.feather")
+    output:
+        os.path.join(config["output_dir"], "json", "disease_pmids.json")
+    script:
+        "scripts/create_disease_pmid_mapping.py"
+
+rule create_human_gene_pmid_mapping:
+    input:
+        os.path.join(config["output_dir"], "filtered", "species.feather"),
+        os.path.join(config["output_dir"], "filtered", "gene.feather"),
+        os.path.join(config["output_dir"], "ids", "human", "symbol2entrez.feather"),
+        os.path.join(config["output_dir"], "ids", "human", "ensgene2entrez.feather"),
+    output:
+        os.path.join(config["output_dir"], "json", "human_entrez_pmids.json")
+    params:
+        species="9606"
+    script:
+        "scripts/create_gene_pmid_mapping.py"
 
 rule count_genes:
     input:
@@ -52,7 +84,7 @@ rule create_symbol2entrez_mapping:
     input:
         "data/symbols.txt"
     output:
-        os.path.join(config["output_dir"], "ids", "human_symbol2entrez.feather")
+        os.path.join(config["output_dir"], "ids", "human", "symbol2entrez.feather")
     script:
         "scripts/create_human_gene_mapping.py"
 
@@ -60,11 +92,11 @@ rule create_ensgene2entrez_mapping:
     input:
         "data/ensgenes.txt"
     output:
-        os.path.join(config["output_dir"], "ids", "human_ensgene2entrez.feather")
+        os.path.join(config["output_dir"], "ids", "human", "ensgene2entrez.feather")
     script:
         "scripts/create_human_gene_mapping.py"
 
-rule download_cellline_data:
+rule download_data:
     output:
         os.path.join(config["output_dir"], "raw", "{annot}.gz")
     shell:
