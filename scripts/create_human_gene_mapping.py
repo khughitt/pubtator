@@ -38,13 +38,18 @@ for i, batch in enumerate(batches):
     mapping = mg.querymany(batch, scopes=scopes,
                            species=9606, fields="entrezgene", as_dataframe=True)
 
-    mapping = mapping[~mapping.entrezgene.isna()]
-
-    res.append(mapping)
+    try:
+        mapping = mapping[~mapping.entrezgene.isna()]
+        res.append(mapping)
+    except:
+        print(f"mapping failed for batch {i}:")
+        print(batch)
 
 # drop unneeded columns
 df = pd.concat([x['entrezgene'] for x in res]).to_frame()
 
 df = df.reset_index().rename(columns={"query": colname})
+
+print(f"Successfully mapped {df.shape[0]}/{len(input_ids)}...")
 
 df.to_feather(snek.output[0])
