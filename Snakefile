@@ -24,7 +24,54 @@ rule all:
         os.path.join(config["output_dir"], "ids", "human", "ensgene2entrez.feather"),
         os.path.join(config["output_dir"], "json", "human_entrez_pmids.json"),
         os.path.join(config["output_dir"], "json", "disease_pmids.json"),
+        os.path.join(config["output_dir"], "json", "chemical_pmids.json"),
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_gene_comat.feather"),
+        os.path.join(config["output_dir"], "co-occurrence", "human_disease_disease_comat.feather"),
+        os.path.join(config["output_dir"], "co-occurrence", "human_chemical_chemical_comat.feather"),
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_chemical_comat.feather"),
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_disease_comat.feather")
+
+rule create_gene_gene_comat:
+    input:
+        os.path.join(config["output_dir"], "json", "human_entrez_pmids.json"),
+    output:
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_gene_comat.feather")
+    script:
+        "scripts/create_gene_gene_comat.py"
+
+rule create_chemical_chemical_comat:
+    input:
         os.path.join(config["output_dir"], "json", "chemical_pmids.json")
+    output:
+        os.path.join(config["output_dir"], "co-occurrence", "human_chemical_chemical_comat.feather")
+    script:
+        "scripts/create_chemical_chemical_comat.py"
+
+rule create_disease_disease_comat:
+    input:
+        os.path.join(config["output_dir"], "json", "disease_pmids.json")
+    output:
+        os.path.join(config["output_dir"], "co-occurrence", "human_disease_disease_comat.feather")
+    script:
+        "scripts/create_disease_disease_comat.py"
+
+rule create_gene_chemical_comat:
+    input:
+        os.path.join(config["output_dir"], "json", "human_entrez_pmids.json"),
+        os.path.join(config["output_dir"], "json", "chemical_pmids.json")
+    output:
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_chemical_comat.feather")
+    script:
+        "scripts/create_gene_chemical_comat.py"
+
+rule create_gene_disease_comat:
+    input:
+        os.path.join(config["output_dir"], "json", "human_entrez_pmids.json"),
+        os.path.join(config["output_dir"], "json", "disease_pmids.json")
+    output:
+        os.path.join(config["output_dir"], "co-occurrence", "human_gene_disease_comat.feather")
+    script:
+        "scripts/create_gene_disease_comat.py"
 
 rule create_chemical_pmid_mapping:
     input:

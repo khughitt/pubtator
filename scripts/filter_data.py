@@ -42,6 +42,9 @@ concept_id_counts = df.concept_id.value_counts()
 to_keep = concept_id_counts.index[concept_id_counts >= CONCEPT_ID_MIN_FREQ]
 df = df[df.concept_id.isin(to_keep)]
 
+# exclude concept ids listed as "-" (e.g. in chemical mesh ids)
+df = df[df.concept_id != "-"]
+
 # drop category levels no longer needed
 df.concept_id = df.concept_id.cat.remove_unused_categories()
 df.mentions = df.mentions.cat.remove_unused_categories()
