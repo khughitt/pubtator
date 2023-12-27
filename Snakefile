@@ -148,5 +148,5 @@ rule download_data:
         os.path.join(config["output_dir"], "raw", "{annot}.gz")
     shell:
         """
-        curl --output {output} https://ftp.ncbi.nlm.nih.gov/pub/lu/PubTatorCentral/{wildcards.annot}2pubtatorcentral.gz
+        curl --output {output} https://ftp.ncbi.nlm.nih.gov/pub/lu/PubTator3/{wildcards.annot}2pubtator3.gz
         """
