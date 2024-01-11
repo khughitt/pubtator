@@ -23,7 +23,7 @@ comat = np.zeros((num_genes, num_genes), dtype=np.uint32)
 indices = np.triu_indices(num_genes, k=1)
 
 # iterate over pairs of genes and compute overlap
-for ind in range(len(indices)):
+for ind in range(len(indices[0])):
     i = indices[0][ind]
     j = indices[1][ind]
 
