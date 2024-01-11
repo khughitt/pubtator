@@ -32,7 +32,7 @@ for ind in range(len(indices[0])):
 
     # get pubmed ids associated with each gene
     gene1_pmids = gene_pmids[gene1]
-    gene2_pmids = gene_pmids[gene1]
+    gene2_pmids = gene_pmids[gene2]
 
     # compute gene-gene co-occurrence count
     num_shared = len(set(gene1_pmids).intersection(gene2_pmids))
