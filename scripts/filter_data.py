@@ -25,25 +25,37 @@ df = pd.read_csv(infile, sep='\t',
 
 # remove entries whose "mentions" field contains tabs/newline characters;
 # these are often associated with erroneous entries
-df = df[~(df.mentions.str.contains("\n") | df.mentions.str.contains("\t"))]
+contains_tab_or_newline = df.mentions.str.contains("\n") | df.mentions.str.contains("\t")
+print(f"Removing {contains_tab_or_newline.sum()} entries with unexpected tab/newline characters")
+df = df[~contains_tab_or_newline]
 
 # remove articles with an unexpectedly large number of associated annotations
 pmid_counts = df.pmid.value_counts()
 to_keep = pmid_counts.index[pmid_counts <= PMID_MAX_ENTRIES]
-df = df[df.pmid.isin(to_keep)]
+mask = df.pmid.isin(to_keep)
+print(f"Removing {(~mask).sum()} entries with > {PMID_MAX_ENTRIES} associated PMIDs")
+df = df[mask]
 
 # remove mentions with a small number of occurrences
 mention_counts = df.mentions.value_counts()
 to_keep = mention_counts.index[mention_counts >= MENTIONS_MIN_FREQ]
-df = df[df.mentions.isin(to_keep)]
+mask = df.mentions.isin(to_keep)
+num_removed = (~mask).sum()
+pct_removed = num_removed / len(mask) * 100
+print(f"Removing {num_removed} ({pct_removed:0.2f}%) articles with mentions that appear < {MENTIONS_MIN_FREQ} times")
+df = df[mask]
 
 # remove concept ids with a small number of occurrences
 concept_id_counts = df.concept_id.value_counts()
 to_keep = concept_id_counts.index[concept_id_counts >= CONCEPT_ID_MIN_FREQ]
-df = df[df.concept_id.isin(to_keep)]
+mask = df.concept_id.isin(to_keep)
+print(f"Removing {(~mask).sum()} entries with concepts that appear < {CONCEPT_ID_MIN_FREQ} times")
+df = df[mask]
 
 # exclude concept ids listed as "-" (e.g. in chemical mesh ids)
-df = df[df.concept_id != "-"]
+mask = df.concept_id != "-"
+print(f"Removing {(~mask).sum()} entries with missing concept IDs")
+df = df[mask]
 
 # drop category levels no longer needed
 df.concept_id = df.concept_id.cat.remove_unused_categories()
